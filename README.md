@@ -7,6 +7,8 @@ With this program you can:
 * See the differences between the API Dump on roblox.com, and the API Dump on one of the gametest sites (in a similar manner to http://anaminus.github.io/api)
 
 All of the files present in the master folder of this repository need to be present (except for the src folder) in order for the program to work correctly.
+
+Download here: https://github.com/CloneTrooper1019/ROBLOX-API-Dump-Tool/archive/master.zip
 Enjoy ;)
 
 # Notes about ROBLOX's Update Pipeline
