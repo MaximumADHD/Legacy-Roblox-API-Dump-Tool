@@ -9,6 +9,7 @@ With this program you can:
 All of the files present in the master folder of this repository need to be present (except for the src folder) in order for the program to work correctly.
 
 Download here: https://github.com/CloneTrooper1019/ROBLOX-API-Dump-Tool/archive/master.zip
+
 Enjoy ;)
 
 # Notes about ROBLOX's Update Pipeline
