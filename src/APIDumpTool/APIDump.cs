@@ -129,8 +129,8 @@ namespace APIDumpTool
             try
             {
                 Lua parser = new Lua();
-                parser.DoString("PRODUCTION_API_DUMP = [[" + apiDump0 + "]]");
-                parser.DoString("GAMETEST_API_DUMP = [[" + apiDump1 + "]]");
+                parser.DoString("PRODUCTION_API_DUMP = [===[" + apiDump0 + "]===]");
+                parser.DoString("GAMETEST_API_DUMP = [===[" + apiDump1 + "]===]");
                 string currentDir = Directory.GetCurrentDirectory();
                 string luaFilePath = Path.Combine(currentDir, "CompareToProduction.lua");
                 string luaFile = File.ReadAllText(luaFilePath);
