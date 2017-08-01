@@ -1,5 +1,5 @@
-# ROBLOX API Dump Tool
-A tool I made to help me keep track of upcoming ROBLOX features, and API changes that I need to document on the ROBLOX Wiki.
+# Roblox API Dump Tool
+A tool I made to help me keep track of upcoming Roblox features, and API changes that I need to document on the Roblox Wiki.
 
 With this program you can: 
 * View the current version's API Dump, as well as the API Dumps on gametest1-gametest5
@@ -8,11 +8,11 @@ With this program you can:
 
 All of the files present in the master folder of this repository need to be present (except for the src folder) in order for the program to work correctly.
 
-Download here: https://github.com/CloneTrooper1019/ROBLOX-API-Dump-Tool/archive/master.zip
+Download here: https://github.com/CloneTrooper1019/Roblox-API-Dump-Tool/archive/master.zip
 
 Enjoy ;)
 
-# Notes about ROBLOX's Update Pipeline
+# Notes about Roblox's Update Pipeline
 
 * API changes go through a testing pipeline before they reach production.
  * Specifically: gametest2 -> gametest1 -> production
