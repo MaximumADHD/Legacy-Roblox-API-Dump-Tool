@@ -6,12 +6,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 using LuaInterface;
 
 namespace APIDumpTool
@@ -49,7 +46,7 @@ namespace APIDumpTool
             WebClient localHttp = new WebClient();
             string url = database + version + "-" + fileName;
             await setStatus("Fetching " + fileName);
-            byte[] file = localHttp.DownloadData(url);
+            byte[] file = await localHttp.DownloadDataTaskAsync(url);
             string filePath = Path.Combine(directory, fileName);
             await setStatus("Writing " + fileName);
             FileStream writeFile = File.Create(filePath);
@@ -83,22 +80,24 @@ namespace APIDumpTool
             string appSettings = Path.Combine(directoryPath, "AppSettings.xml");
             File.WriteAllText(appSettings, "<Settings><ContentFolder>content</ContentFolder><BaseUrl>http://www.roblox.com</BaseUrl></Settings>");
             // Extract RobloxApp.zip and Libraries.zip from ROBLOX's setup cdn into our directory.
-            await extractRobloxZip(database, version, "RobloxApp.zip", directoryPath);
-            await extractRobloxZip(database, version, "Libraries.zip", directoryPath);
+            Task getRobloxApp = extractRobloxZip(database, version, "RobloxApp.zip", directoryPath);
+            Task getLibraries = extractRobloxZip(database, version, "Libraries.zip", directoryPath);
+            await Task.WhenAll(getRobloxApp, getLibraries);
             // Return the path to RobloxPlayerBeta.exe
             return Path.Combine(directoryPath, "RobloxPlayerBeta.exe");
         }
 
         public async Task<string> getAPIFile(string database = "")
         {
-            this.Enabled = false;
-            if (database.Equals(""))
-            {
+            Enabled = false;
+            if (database.Length == 0)
                 database = comboBox1.Text;
-            }
+
+            string versionDataUrl = "http://versioncompatibility.api." + database + ".com/GetCurrentClientVersionUpload/?apiKey=76e5a40c-3ae1-4028-9f10-7c62520bd94f&binaryType=WindowsPlayer";
+            string version = http.DownloadString(versionDataUrl);
+            version = version.Replace('"', ' ').Trim();
             database = "http://setup." + database + ".com/";
-            Console.WriteLine(database);
-            string version = http.DownloadString(database + "version.txt");
+
             string apiDumps = Path.Combine(Environment.GetEnvironmentVariable("LocalAppData"), "Roblox API Dumps");
             createDirectory(apiDumps);
             string filePath = Path.Combine(apiDumps, version) + ".txt";
@@ -107,7 +106,6 @@ namespace APIDumpTool
                 string buildDir = Path.Combine(apiDumps,"Builds");
                 createDirectory(buildDir);
                 string robloxPlayerBeta = await loadRobloxBuild(database, version, buildDir);
-                Console.WriteLine(robloxPlayerBeta);
                 await setStatus("Extracting API Dump");
                 Process apiDump = Process.Start(robloxPlayerBeta, "--API api.txt");
                 apiDump.WaitForExit();
@@ -119,7 +117,7 @@ namespace APIDumpTool
             {
                 await setStatus("API Dump already generated!");
             }
-            this.Enabled = true;
+            Enabled = true;
             return filePath;
         }
 
@@ -160,7 +158,7 @@ namespace APIDumpTool
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            this.Enabled = false;
+            Enabled = false;
             if (!comboBox1.Text.Equals("roblox"))
             {
                 await setStatus("Getting gametest API Dump...");
@@ -172,9 +170,7 @@ namespace APIDumpTool
                 if (result != "FAIL")
                 {
                     if (result == "")
-                    {
                         MessageBox.Show("No differences were found :(", "No results", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
                     else
                     {
                         try
@@ -196,7 +192,7 @@ namespace APIDumpTool
             {
                 MessageBox.Show("You cannot compare the production API Dump to itself!","Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
             }
-            this.Enabled = true;
+            Enabled = true;
         }
     }
 }
