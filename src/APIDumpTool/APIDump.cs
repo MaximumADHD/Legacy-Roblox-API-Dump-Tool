@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LuaInterface;
@@ -79,10 +76,7 @@ namespace APIDumpTool
             // Write AppSettings (required to get RobloxPlayerBeta to cooperate)
             string appSettings = Path.Combine(directoryPath, "AppSettings.xml");
             File.WriteAllText(appSettings, "<Settings><ContentFolder>content</ContentFolder><BaseUrl>http://www.roblox.com</BaseUrl></Settings>");
-            // Extract RobloxApp.zip and Libraries.zip from ROBLOX's setup cdn into our directory.
-            Task getRobloxApp = extractRobloxZip(database, version, "RobloxApp.zip", directoryPath);
-            Task getLibraries = extractRobloxZip(database, version, "Libraries.zip", directoryPath);
-            await Task.WhenAll(getRobloxApp, getLibraries);
+            await extractRobloxZip(database, version, "RobloxApp.zip", directoryPath);
             // Return the path to RobloxPlayerBeta.exe
             return Path.Combine(directoryPath, "RobloxPlayerBeta.exe");
         }
@@ -129,9 +123,7 @@ namespace APIDumpTool
                 Lua parser = new Lua();
                 parser.DoString("PRODUCTION_API_DUMP = [===[" + apiDump0 + "]===]");
                 parser.DoString("GAMETEST_API_DUMP = [===[" + apiDump1 + "]===]");
-                string currentDir = Directory.GetCurrentDirectory();
-                string luaFilePath = Path.Combine(currentDir, "CompareToProduction.lua");
-                string luaFile = File.ReadAllText(luaFilePath);
+                string luaFile = Encoding.ASCII.GetString(Properties.Resources.CompareToProduction);
                 parser.DoString(luaFile);
                 result = parser.GetString("FINAL_RESULT");
             }
